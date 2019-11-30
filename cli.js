@@ -179,14 +179,12 @@ function getImages (icons) {
   return new Promise((resolve) => {
     spinner.start('Fetching icon urls')
     const iconIds = icons.map(icon => icon.id).join(',')
-    console.log(`url: https://api.figma.com/v1/images/${config.fileId}?ids=${iconIds}&format=pdf`)
-    figmaClient.get(`/images/${config.fileId}?ids=${iconIds}&format=pdf`)
+
+    figmaClient.get(`/images/${config.fileId}?ids=${iconIds}&format=svg`)
       .then((res) => {
-        console.log("response: " + res.data)
         spinner.succeed()
         const images = res.data.images
         icons.forEach((icon) => {
-          console.log("aaa: " + images[icon.id])
           icon.image = images[icon.id]
         })
         resolve(icons)
@@ -215,7 +213,7 @@ function downloadImage (url, name) {
       }
     }
   }
-  const imagePath = path.resolve(directory, `${nameClean}.pdf`)
+  const imagePath = path.resolve(directory, `${nameClean}.svg`)
   const writer = fs.createWriteStream(imagePath)
 
   console.log('Downloading from: ', url)
@@ -235,9 +233,9 @@ function downloadImage (url, name) {
 
   return new Promise((resolve, reject) => {
     writer.on('finish', () => {
-      // console.log(`Saved ${name}.pdf`, fs.statSync(imagePath).size)
+      // console.log(`Saved ${name}.svg`, fs.statSync(imagePath).size)
       resolve({
-        name: `${name}.pdf`,
+        name: `${name}.svg`,
         size: fs.statSync(imagePath).size
       })
     })
