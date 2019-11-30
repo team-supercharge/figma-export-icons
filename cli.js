@@ -179,11 +179,14 @@ function getImages (icons) {
   return new Promise((resolve) => {
     spinner.start('Fetching icon urls')
     const iconIds = icons.map(icon => icon.id).join(',')
+    console.log(`url: https://api.figma.com/v1/images/${config.fileId}?ids=${iconIds}&format=pdf`)
     figmaClient.get(`/images/${config.fileId}?ids=${iconIds}&format=pdf`)
       .then((res) => {
+        console.log("response: " + res.data)
         spinner.succeed()
         const images = res.data.images
         icons.forEach((icon) => {
+          console.log("aaa: " + images[icon.id])
           icon.image = images[icon.id]
         })
         resolve(icons)
@@ -215,6 +218,7 @@ function downloadImage (url, name) {
   const imagePath = path.resolve(directory, `${nameClean}.pdf`)
   const writer = fs.createWriteStream(imagePath)
 
+  console.log('Downloading from: ', url)
 
   axios.get(url, {responseType: 'stream'})
     .then((res) => {
